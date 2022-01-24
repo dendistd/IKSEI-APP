@@ -1,0 +1,20 @@
+## Server properties
+server:
+  port: 8090
+  
+## Spring DATASOURCE
+spring:
+  jackson:
+    time-zone: GMT+7
+    serialization:
+      write-dates-as-timestamps: false
+    property-naming-strategy: SNAKE_CASE
+    deserialization:
+      fail-on-unknown-properties: true
+
+  datasource:
+   
+    url: jdbc:oracle:thin:@10.43.2.60:1525:diksei
+    username: iksei
+    password: BCAbca123
+    
