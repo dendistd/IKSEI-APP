@@ -1,10 +1,12 @@
-package com.example.iksei.dto;
+package com.example.iksei.payload.ab;
 
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UpdateInputAb {
+//	objAb.getAbId(),objAb.getAbName(), objAb.getIsNotified(), objAb.getNotifTransaksi()
+//	, objAb.getCorporateId(), objAb.getCorpIdRegDate(), objAb.getCompCode(), objAb.getCompCodeRegDate(), objAb.getAbInitial()
 	@JsonProperty("ab_id")
 	private String abId;
 	
@@ -25,31 +27,17 @@ public class UpdateInputAb {
 	
 	@JsonProperty("comp_code")
 	private String compCode;
-		
+	
 	@JsonProperty("comp_code_reg_date")
 	private Date compCodeRegDate;
 	
 	@JsonProperty("ab_initial")
 	private String abInitial;
-
+	
 	public UpdateInputAb() {
 		super();
 	}
 
-	public UpdateInputAb(String abName, String isNotified, String notifTransaksi, String corporateId,
-			Date corpIdRegDate, String compCode, Date compCodeRegDate, String abInitial) {
-		super();
-		this.abName = abName;
-		this.isNotified = isNotified;
-		this.notifTransaksi = notifTransaksi;
-		this.corporateId = corporateId;
-		this.corpIdRegDate = corpIdRegDate;
-		this.compCode = compCode;
-		this.compCodeRegDate = compCodeRegDate;
-		this.abInitial = abInitial;
-	}
-	
-	
 	public UpdateInputAb(String abId, String abName, String isNotified, String notifTransaksi, String corporateId,
 			Date corpIdRegDate, String compCode, Date compCodeRegDate, String abInitial) {
 		super();
@@ -63,7 +51,6 @@ public class UpdateInputAb {
 		this.compCodeRegDate = compCodeRegDate;
 		this.abInitial = abInitial;
 	}
-	
 
 	public String getAbId() {
 		return abId;
@@ -140,9 +127,10 @@ public class UpdateInputAb {
 	@Override
 	public String toString() {
 		return "UpdateInputAb [abId=" + abId + ", abName=" + abName + ", isNotified=" + isNotified + ", notifTransaksi="
-				+ notifTransaksi + ", corporateId=" + corporateId + ", corpIdRegDate=" + corpIdRegDate + ", compCode="
+				+ notifTransaksi + ", corporateId=" + corporateId + ", corpRegDate=" + corpIdRegDate + ", compCode="
 				+ compCode + ", compCodeRegDate=" + compCodeRegDate + ", abInitial=" + abInitial + "]";
 	}
-
+	
+	
 
 }

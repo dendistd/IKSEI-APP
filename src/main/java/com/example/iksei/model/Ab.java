@@ -11,7 +11,6 @@ import javax.persistence.Table;
 @Table(name = "dendi_ab")
 public class Ab {
 	
-	
 	@Id
 	@Column(name = "ab_id" )
 	private String abId;

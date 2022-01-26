@@ -33,14 +33,16 @@ public enum ErrorEnum {
 	INVALID_BODY_REQUEST("IKSEI-99-991", "Isi body tidak sesuai", "Invalid body request"),
 	INVALID_FIELD_VALUE("IKSEI-99-992", "Isi field tidak sesuai", "Invalid field value"),
 	UNKNOWN_ERROR("IKSEI-99-999", "Sistem tidak tersedia", "System Not Available"),
-	DELETE("IKSEI DELETE-22-000", "Hapus Data Berhasil", "Delete Data Success"),
+	DELETE("IKSEI-22-000", "Hapus Data Berhasil", "Delete Data Success"),
 	FAIL_DELETE("IKSEI-22-111", "Hapus Data Gagal", "Delete Data Failed"),
 	CREATE("IKSEI-33-000", "Data Berhasil Ditambahkan", "Insert Data Success"),
 	FAIL_CREATE("IKSEI-33-111", "Data Gagal Ditambahkan", "Insert Data Failed"),
 	GET_ALL("IKSEI-44-000", "Berhasil Menampilkan Semua Data", "Success TO Show All Data"),
 	FAIL_GET_ALL("IKSEI-44-111", "Gagal Menampilkan Semua Data", "Failed To Show All Data" ),
-	UPDATE("55-000", "Berhasil Memperbaharui Data", "Success To Update Data"),
-	FAIL_UPDATE("55-111", "Gagal Memperbaharui Data", "Failed To Update Data");
+	UPDATE("IKSEI-55-000", "Berhasil Memperbaharui Data", "Success To Update Data"),
+	FAIL_UPDATE("IKSEI-55-111", "Gagal Memperbaharui Data", "Failed To Update Data"),
+	FIND_ONE("IKSEI-66-000", "Berhasil Menemukan Data", "Find Data Success"),
+	FAIL_FIND_ONE("IKSEI-66-111", "Gagal Menemukan Data", "Failed To Find Data");
 	
 
 	private String errorCode;

@@ -1,23 +1,25 @@
 package com.example.iksei.service;
 
-import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
+
 import com.example.iksei.model.GroupUserKbb;
 import com.example.iksei.payload.ResponseSchema;
+import com.example.iksei.payload.groupuser.InputUserGroupKbb;
 
 public interface GroupUserKbbService {
 	
 	public List<GroupUserKbb> getAllData ();
 	
-	public GroupUserKbb findGroupUserKbbById(String id);
+	public ResponseEntity<?> findGroupUserKbbById(String id);
 	
-	public ResponseSchema<?> createGroupUserKbb(GroupUserKbb input);
+	public ResponseEntity<?> createGroupUserKbb(InputUserGroupKbb input);
 	
-	public ResponseSchema<?> updateGroupUserKbb(Map<String, Object> map) throws ParseException;
+	public ResponseEntity<?> updateGroupUserKbb(Map<String, String> map);
 	
-	public GroupUserKbb deleteGroupUserKbb(String id);
+	public ResponseEntity<?> deleteGroupUserKbb(String id);
 	
 
 }

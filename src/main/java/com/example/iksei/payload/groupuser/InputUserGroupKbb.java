@@ -1,35 +1,39 @@
-package com.example.iksei.dto;
-
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
+package com.example.iksei.payload.groupuser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class InputCreateGroupUserKbb {
+public class InputUserGroupKbb {
+	
+	@JsonProperty("id")
+	private String id;
+	
 	@JsonProperty("ab_id")
 	private String abId;
 	
 	@JsonProperty("group_user_code")
 	private String groupUserCode;
 	
-	@JsonProperty("reg_date")
-	private Date regDate;
-	
 	@JsonProperty("is_new")
 	private String isNew;
 
-	public InputCreateGroupUserKbb() {
+	public InputUserGroupKbb() {
 		super();
 	}
 
-	public InputCreateGroupUserKbb(String abId, String groupUserCode, Date regDate, String isNew) {
+	public InputUserGroupKbb(String id, String abId, String groupUserCode, String isNew) {
 		super();
+		this.id = id;
 		this.abId = abId;
 		this.groupUserCode = groupUserCode;
-		this.regDate = regDate;
 		this.isNew = isNew;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getAbId() {
@@ -48,14 +52,6 @@ public class InputCreateGroupUserKbb {
 		this.groupUserCode = groupUserCode;
 	}
 
-	public Date getRegDate() {
-		return regDate;
-	}
-
-	public void setRegDate(Date regDate) {
-		this.regDate = regDate;
-	}
-
 	public String getIsNew() {
 		return isNew;
 	}
@@ -66,8 +62,8 @@ public class InputCreateGroupUserKbb {
 
 	@Override
 	public String toString() {
-		return "InputCreateGroupUserKbb [abId=" + abId + ", groupUserCode=" + groupUserCode + ", regDate=" + regDate
-				+ ", isNew=" + isNew + "]";
+		return "InputUserGroupKbb [id=" + id + ", abId=" + abId + ", groupUserCode=" + groupUserCode + ", isNew="
+				+ isNew + "]";
 	}
 	
 	

@@ -1,10 +1,10 @@
-package com.example.iksei.dto;
+package com.example.iksei.payload.groupuser;
 
 import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UpdateInputGroupUserKbb {
-	
 	@JsonProperty("id")
 	private String id;
 	
@@ -19,7 +19,7 @@ public class UpdateInputGroupUserKbb {
 	
 	@JsonProperty("is_new")
 	private String isNew;
-
+	
 	public UpdateInputGroupUserKbb() {
 		super();
 	}

@@ -1,7 +1,6 @@
 package com.example.iksei.service.imple;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,28 +10,28 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.util.StringBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.example.iksei.dto.InputCreateGroupUserKbb;
-import com.example.iksei.dto.UpdateInputGroupUserKbb;
 import com.example.iksei.enumeration.ErrorEnum;
-import com.example.iksei.model.Ab;
 import com.example.iksei.model.GroupUserKbb;
-import com.example.iksei.model.repo.GroupUserKbbRepository;
 import com.example.iksei.payload.ErrorSchema;
 import com.example.iksei.payload.GagalOutputSchema;
 import com.example.iksei.payload.ResponseSchema;
+import com.example.iksei.payload.groupuser.InputUserGroupKbb;
+import com.example.iksei.payload.groupuser.UpdateInputGroupUserKbb;
+import com.example.iksei.repo.GroupUserKbbRepository;
 import com.example.iksei.service.GroupUserKbbService;
+
 
 @Service
 public class GroupUserKbbServiceImple implements GroupUserKbbService {
 	@Autowired
 	GroupUserKbbRepository groupUserKbbRepository;
-	
-	//VALUELOG UNTUK 1 SERVICE 
-	String valueLog = logNumber();
 	
 	//Buat variabel genID untuk men-generate field id di TABEL DENDI_USER_GROUP_KBB
 		private static final String generateId = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -68,6 +67,8 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 	
 	//GET ALL DATA
 	public List<GroupUserKbb> getAllData (){
+		//VALUELOG UNTUK 1 SERVICE 
+		String valueLog = logNumber();
 		List<GroupUserKbb> result = new ArrayList<>();
 		System.out.println("["+valueLog + "]" +" - "+dateLog() + " - List<GroupUserKbb> telah dibuat ");
 		result = groupUserKbbRepository.findAll();
@@ -76,18 +77,38 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 	}
 	
 	//FIND DATA BY ID
-	public GroupUserKbb findGroupUserKbbById(String id) {
-		GroupUserKbb result = groupUserKbbRepository.findById(id).get();
-		return result;
+	public ResponseEntity<?> findGroupUserKbbById(String id) {
+		//VALUELOG UNTUK 1 SERVICE 
+		String valueLog = logNumber();
+		ErrorSchema errorSchema = new ErrorSchema(ErrorEnum.FIND_ONE);
+		GroupUserKbb result = new GroupUserKbb();
+		ResponseSchema<GroupUserKbb> responseSchema = new ResponseSchema<>(errorSchema);
+		try {
+			result = groupUserKbbRepository.findById(id).get();
+			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Berhasil Menemukan Data = "+ result.toString());
+		} catch (Exception e) {
+			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Data Dengan Id Yang Di Input Tidak Ada Dalam DB");
+			ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_FIND_ONE);
+			ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);
+			String reason = "Data Dengan Id Yang Di Input Tidak Ada Dalam DB";
+			responseSchema2.setOutputSchema(new GagalOutputSchema(reason));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
+		}
+		responseSchema.setOutputSchema(result);
+		return ResponseEntity.status(HttpStatus.OK).body(responseSchema);
 	}
 	
 	//CREATE DATA
-	public ResponseSchema<?> createGroupUserKbb(GroupUserKbb input){
+	public ResponseEntity<?> createGroupUserKbb(InputUserGroupKbb input){
+		//VALUELOG UNTUK 1 SERVICE 
+		String valueLog = logNumber();
 		ErrorSchema errorSchema = new ErrorSchema(ErrorEnum.CREATE);
 		ResponseSchema<GroupUserKbb> responseSchema = new ResponseSchema<>(errorSchema);
 		GroupUserKbb dataGroup = new GroupUserKbb();
+		//Generate STring ID dengan fungsi dari Java -> RandomStringUtils
+		String stringId = RandomStringUtils.randomAlphanumeric(32);
 		
-		
+	try {
 		// BISA CREATE KARNA  INPUT PARAM NYA PANJANG NYA TIDAK MELEBIHI BATAS MAX VALUE DARI SETIAP KOLOM
 		if(!(input.getAbId().length() >= 6 || input.getGroupUserCode().length() >=6 || input.getIsNew().length() >= 2 )) {
 			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Akan Dilakukan Pengecekan AB_ID Ada atau Tidak Dalam DB");
@@ -99,7 +120,8 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 				if( (input.getIsNew().equals("y") || input.getIsNew().equals("n") || input.getIsNew().equals("Y") || input.getIsNew().equals("N")) ){
 					System.out.println("["+valueLog + "]" +" - "+dateLog() + " - kondisi terpenuhi, value input param is_notified sama dengan Y or N or y or n, kemudian persiapan save ke db");
 					System.out.println("["+valueLog + "]" +" - "+dateLog() + " - proses sebelum save ke db");
-					dataGroup.setId(genId(32).toUpperCase());
+//					dataGroup.setId(genId(32).toUpperCase());
+					dataGroup.setId(stringId.toUpperCase());
 					dataGroup.setAbId(input.getAbId().toUpperCase());
 					dataGroup.setGroupUserCode(input.getGroupUserCode().toUpperCase());
 					Date date = new Date();
@@ -116,22 +138,24 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 					ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_CREATE);
 					ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);	
 					responseSchema2.setOutputSchema(new GagalOutputSchema("VALUE FOR IS_NEW IS INCORECT, THE IS_NOTIFIED VALUE MUST BE 'Y' or 'N' "));
-					return responseSchema2;
+					return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(responseSchema2);
 							
 				}
 
 			} //AKHIR IF -> BISA CREATE KARNA AB_ID ADA DALAM TABEL DENDI_AB
 						
-			//GAK BISA CREATE AKRNA AB_ID TIDAK ADA DALAM DENDI_AB
+			//GAK BISA CREATE KARNA AB_ID TIDAK ADA DALAM DENDI_AB
 			else {
 				System.out.println("["+valueLog + "]" +" - "+dateLog() + " - CREATE AB GAGAL KARNA AB_ID YANG DIINPUT TIDAK ADA DALAM DB");
 				ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_CREATE);
 				ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);
 				responseSchema2.setOutputSchema(new GagalOutputSchema("AB_ID That Inputed Doesnt Exist In Database, Insert Data Failed"));
-				return responseSchema2;
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
 			}
 							
 		}
+	
+		
 		// TIDAK BISA CREATE KARNA  DATA YANG DIINPUT DI INPUT PARAM(BODY) ADA YANG MELEBIHI BATAS MAX DARI SETIAP KOLOM
 		else {
 			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - ada value yang melebihi batas maximum value dari setiap kolom");
@@ -140,18 +164,23 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Persiapan set Output schema ");
 			responseSchema2.setOutputSchema(new GagalOutputSchema("There's Value That Passed Exceeds The Maximum Length "));
 			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - OutputSchema telah diatur " + responseSchema2.getOutputSchema().toString());
-			return responseSchema2;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
 			
 
 		}//AKHIR BLOCK ELSE PANJANG VALUE INPUT PARAMNYA  MELEBIHI BATAS MAX VALUE DARI SETIAP KOLOM
-
+	} catch (Exception e) {
+		ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_CREATE);
+		ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);	
+		responseSchema2.setOutputSchema(new GagalOutputSchema("Field yang Di Input Ke Dalam Request Body Tidak Lengkap "));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
+	}
 		responseSchema.setOutputSchema(dataGroup);
-		return responseSchema;
+		return ResponseEntity.status(HttpStatus.OK).body(responseSchema);
 	
 	}
 	
 	//UPDATE
-	public ResponseSchema<?> updateGroupUserKbb(Map<String, Object> map) throws ParseException{
+	public ResponseEntity<?> updateGroupUserKbb(Map<String, String> map) {
 		/* Alur proses update : 
 		 * 1. kita input ab_id di input param(body) untuk update data (DONE)
 		 * 2. ab_id yang di input (SI map nya) harus sama dengan ab_id yang ada di db (DONE)
@@ -160,9 +189,10 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 		 * MAKA tidak akan bisa/boleh update data
 		 * 5. kita boleh update data dari beberapa/semua field yang ingin diubah => (FLEKSIBEL) (DONE)
 		 * 6. Jika length value di input paramnya MELEBIHI AMX VALUE SETIAP FILED, MAKA-> UPDATE GAGAL*/
-		
+		//VALUELOG UNTUK 1 SERVICE 
+		String valueLog = logNumber();
 		ErrorSchema errorSchema = new ErrorSchema(ErrorEnum.UPDATE);
-		ResponseSchema<Map<String, Object>> responseSchema = new ResponseSchema<>(errorSchema);
+		ResponseSchema<Map<String, String>> responseSchema = new ResponseSchema<>(errorSchema);
 		
 		// ALUR PROSES UPDATE NO 4 => Cek Jika field Map nya/input paramn updatenya kosong, MAKA UPDATE GAGAL
 		System.out.println("["+valueLog + "]" +" - "+dateLog() +" - CEK size dari map (input paramnya) = "+map.size());
@@ -172,7 +202,7 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 			ResponseSchema<GagalOutputSchema> responseFail = new ResponseSchema<>(errorFail);
 			String reason = "No request Parameter Update";
 			responseFail.setOutputSchema(new GagalOutputSchema(reason));
-			return responseFail;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseFail);
 			}
 					
 		//ALUR PROSES UPDATE NO 3 => Cek Jika AB_ID nya TIDAK DI INPUTKAN KEDALAM INPUT PARAM, MAKA TIDAK BISA UPDATE/GAGAL
@@ -182,7 +212,7 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 			ResponseSchema<GagalOutputSchema> responseFail = new ResponseSchema<>(errorFail);
 			String reason = "ID is required for updating data";
 			responseFail.setOutputSchema(new GagalOutputSchema(reason));
-			return responseFail;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseFail);
 			}
 		//ISI DARI ID NYA STRING KOSONG, ATAU HANYA SPASI, MAKA TIDAK BISA DILAKUKAN UPDATE
 		if(map.get("id").toString().contains(" ") || map.get("id").toString().equals("")) {
@@ -191,7 +221,7 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 			ResponseSchema<GagalOutputSchema> responseFail = new ResponseSchema<>(errorFail);
 			String reason = "Value Format For Id is Incorect";
 			responseFail.setOutputSchema(new GagalOutputSchema(reason));
-			return responseFail;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseFail);
 		}
 		//ID YANG INPUTKAN TIDAK ADA DALAM DATABASE
 		if(groupUserKbbRepository.cekId(map.get("id").toString()).size() < 1) {
@@ -200,75 +230,59 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 			ResponseSchema<GagalOutputSchema> responseFail = new ResponseSchema<>(errorFail);
 			String reason = "ID Is Not Found In Database";
 			responseFail.setOutputSchema(new GagalOutputSchema(reason));
-			return responseFail;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseFail);
 		}
 		
 		//Convert Object(map.get("id") ->  ke String (id)
 		//FIND DATA DARI DB menggunakan SERVICE findGroupUserKbbById, id nya dari map(input param), ada gak di db ?
-		GroupUserKbb objGuk = findGroupUserKbbById(map.get("id").toString());
+//		GroupUserKbb objGuk = findGroupUserKbbById(map.get("id").toString());
+		GroupUserKbb objGuk = groupUserKbbRepository.findById(map.get("id").toUpperCase()).get();
 		
 		/*Buat instance dari UpdateInputGroupUserKbb untuk menampung data hasil findGroupUserKbbById/objGuk
-		 * karna kalo pakai instance GroupUserKbb akan nge hit ke db, karna GroupUserKbb adalah entity */
-		/* String id, String abId, String groupUserCode, Date regDate, String isNew */
-		
+		 * karna kalo pakai instance GroupUserKbb akan nge hit ke db, karna GroupUserKbb adalah entity */		
 		UpdateInputGroupUserKbb tampungData = new UpdateInputGroupUserKbb(objGuk.getId(), objGuk.getAbId(), objGuk.getGroupUserCode(), objGuk.getRegDate(), objGuk.getIsNew());
 		
 		//Buat penanda dari setiap pengecekan , fungsinya untuk menandai suatu proses apakah Gagal Update, atau Terupdate
 		String[] penanda = new String[4];
-		
-		//JIKA PANJANG VALUE INPUT PARAMNYA MELEBIHI MAX VALUE DARI SETIAP FIELD, MAKA GAK BISA LAKUKAN UPDATE
-		if(map.get("id").toString().length() >=41 || map.get("ab_id").toString().length() >= 6  || map.get("group_user_code").toString().length() >=6 || map.get("is_new").toString().length() >= 2 ) {	
-			System.out.println("["+valueLog + "]" +" - "+dateLog() +" - ada value yang melebihi batas maximum value dari setiap kolom");
-			ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_CREATE);
-			ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);	
-			System.out.println("["+valueLog + "]" +" - "+dateLog() +" - Persiapan set Output schema ");
-			responseSchema2.setOutputSchema(new GagalOutputSchema(" There's Value That Passed Exceeds The Maximum Length "));
-			System.out.println("["+valueLog + "]" +" - "+dateLog() +" - OutputSchema telah diatur " + responseSchema2.getOutputSchema().toString());
-			return responseSchema2;
-		}
-		
-		//ELSE -> BISA UPDATE DATA KARNA PANJANG INPUT PARAM NYA TIDAK MELEBIHI MAX VALUE DARI TIAP KOLOM.
-		else {
-			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Length Input Param Tidak Melebihi Max Value Kolom");
+		try {
+//		if(map.get("id").length() < 41 || (map.get("ab_id").length() < 6 || map.get("ab_id") == null ) || ( map.get("group_user_code").length() < 6 || map.get("group_user_code") == null) || ( map.get("is_new").length() < 2 || map.get("is_new") == null) ) {
+//		if(map.get("id").length() < 41 && (map.get("ab_id").length() < 6 ) && ( map.get("group_user_code").length() < 6 ) && ( map.get("is_new").length() < 2 ) ) {
+			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Masuk Blok COde Try");
 			//ALUR PROSES UPDATE NO 2 => Jika id dari map(input param) nya beda dengan id dari db , maka gak bisa Update
 			if(!(map.get("id").equals(objGuk.getId()) ) ) {
 				System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Id Yang Di Input Berbeda Dengan DB");
 				penanda[0] = "Gagal";	
 			}
 	
-			//Cek apakah ab_id yang diinput(dari map nya) sama dengan yang didatabase jika beda berarti ada  update
 			if(!(map.get("ab_id") == null) ) {
 				System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Ada Value Yang Di Input Kedalam Id");
-
 					//BISA UPDATE KARNA NILAI AB_ID YANG DI INPUT ADA DI DB
 					if(groupUserKbbRepository.cekAbId(map.get("ab_id").toString().toUpperCase()).size() > 0 ) {
 						System.out.println("["+valueLog + "]" +" - "+dateLog() +" - Ab_Id Ada Dalam DB");
 						//BISA DILAKUKAN UPDATE -> NILAI AB_ID YANG DI INPUT DENGAN YG ADA DI DB BEDA
 						if( !(map.get("ab_id").toString().toUpperCase().equals(objGuk.getAbId())) ) {
-							System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Bisa update karna ab_id yang diinput beda dengan yang di db");
-//							System.out.println("["+valueLog + "]" +" - "+dateLog() + " - ab_id input = "+map.get("ab_id").toString());
-//							System.out.println("["+valueLog + "]" +" - "+dateLog() +" - ab_id dalam database = "+ objGuk.getAbId().toString());
-						
+							System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Bisa update karna ab_id yang diinput beda dengan yang di db");						
 							objGuk.setAbId(map.get("ab_id").toString().toUpperCase());
 							System.out.println("["+valueLog + "]" +" - "+dateLog() +" - Proses set ab_id dengan value baru");
 							penanda[1] = "Terupdate";
 					}
-					
 						else {
 							System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Tidak Ada Update Value Untuk AB_ID");
 							penanda[1] = "Gagal";
 						}
 					}//AKHIR IF AB_ID YANG DI INPUT ADA DALAM DB
 		
-				// TIDAK BISA DILAKUKAN UPDATE -> YANG DI INPUT UNTUK UPDATENYA VALUES AB_ID TIDAK ADA DI TABEL DENDI_AB 
-				else {
-					System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Ab_ID Yang DiInput Tidak Ada Dalam DB");
-					ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_UPDATE);
-					ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);	
-					responseSchema2.setOutputSchema(new GagalOutputSchema("AB_ID VALUE THAT IMPUTED DOESNT EXIST IN DATABASE, UPDATE FAILED FOR AB_ID VALUE "));						return responseSchema2;
-				}
-
-				
+					// TIDAK BISA DILAKUKAN UPDATE -> YANG DI INPUT UNTUK UPDATENYA VALUES AB_ID TIDAK ADA DI TABEL DENDI_AB 
+					else {
+						System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Ab_ID Yang DiInput Tidak Ada Dalam DB");
+						ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_UPDATE);
+						ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);	
+						responseSchema2.setOutputSchema(new GagalOutputSchema("AB_ID VALUE THAT IMPUTED DOESNT EXIST IN DATABASE, UPDATE FAILED FOR AB_ID VALUE "));
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
+					}
+			}
+			else {
+				penanda[1] = "Kosong";
 			}
 			//Cek apakah groupUserCode yang diinput(dari map nya) sama dengan yang didatabase jika beda berarti ada  update
 			if(!(map.get("group_user_code") == null) ) {
@@ -284,6 +298,9 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 					System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Tidak Ada Update Value Untuk group_user_code");
 					penanda[2] = "Gagal";
 				}
+			}
+			else {
+				penanda[2] = "Kosong";
 			}
 			
 			//IS_NEW NYA DI TULISKAN DI INPUT PARAM NYA
@@ -308,8 +325,8 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 						ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_UPDATE);
 						ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);	
 						responseSchema2.setOutputSchema(new GagalOutputSchema("VALUE FOR IS_NEW IS INCORECT, THE IS_NEW VALUE MUST BE 'Y' or 'N' "));
-						return responseSchema2;
-						}
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
+					}
 					
 				} // AKHIR DARI IF YANG IS_NEW DARI INPUT PARAM DAN DB NYA BEDA
 				//JIKA NILAI IS_NEW DARI INPUT PARAM DAN DB NYA SAMA , GAK BISA UPDATE JADINYA
@@ -318,28 +335,36 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 					penanda[3] = "Gagal";
 				}
 				
-				
+			}	
+			else {
+				penanda[3] = "Kosong";
+			}
+			
 			//KONDISI UNTUK SEMUA PENANDA GAGAL UDPADTE
-			if("Gagal".equals(penanda[1]) && "Gagal".equals(penanda[2]) &&  "Gagal".equals(penanda[3]) ) {
-//			if( "Gagal".equals(penanda[0]) && "Gagal".equals(penanda[1]) && "Gagal".equals(penanda[2]) && "Gagal".equals(penanda[3]) && "Gagal".equals(penanda[4]) ) {
-				System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Value Input Param Sama Dengan Yang Ada Di DB");
-//				System.out.println(penanda[0].toString() + penanda[1].toString() + penanda[2].toString() + penanda[4].toString() );
+			if( ("Gagal".equals(penanda[1]) || penanda[1].equals("Kosong") ) && ("Gagal".equals(penanda[2]) || penanda[2].equals("Kosong")  ) && ("Gagal".equals(penanda[3]) || penanda[3].equals("Kosong") )) {
+				System.out.println("["+valueLog + "]" +" - "+dateLog() + "- Tidak Ada Perubahan Data");
 				ErrorSchema errorFail = new ErrorSchema(ErrorEnum.FAIL_UPDATE);
 				ResponseSchema<GagalOutputSchema> responseFail = new ResponseSchema<>(errorFail);
-				String reason = "Data request parameter update sama dengan data di database!, TIDAK ADA PERUBAHAN DATA";
+				String reason = "TIDAK ADA PERUBAHAN DATA";
 				responseFail.setOutputSchema(new GagalOutputSchema(reason));
-				return responseFail;
-				
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseFail);	
 			}
-		}//AKHIR BLOK ELSE -> BISA UPDATE DATA KARNA PANJANG INPUT PARAM NYA TIDAK MELEBIHI MAX VALUE DARI TIAP KOLOM.
-	
+
 		//SAVE KE DB 
 		System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Proses Akan Save Ke DB");
 		objGuk = groupUserKbbRepository.save(objGuk);
 		System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Proses Save Ke DB Selesai");
 		
+	} catch (Exception e){
+		ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_UPDATE);
+		ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);	
+		responseSchema2.setOutputSchema(new GagalOutputSchema("Length Input Param Yang Di Input Bernilai 0 Atau Melebihi Max Length Kolom"));
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
+		
+	}
 		//BUAT MAP2 UNTUK ATUR OUTPUT_SCHEMA DI RESPONSESCHEMA 
-		Map<String, Object> map2 = new LinkedHashMap<>();	
+		Map<String, String> map2 = new LinkedHashMap<>();	
 		System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Untuk Menampilkan Response Api");
 		/* String id, String abId, String groupUserCode, Date regDate, String isNew */
 		
@@ -373,21 +398,36 @@ public class GroupUserKbbServiceImple implements GroupUserKbbService {
 		System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Persiapan sebelum set OutputSchema dari data yang sudah diupdate");
 		responseSchema.setOutputSchema(map2);
 		System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Setelah set Output Schema, isi dari OututSchema adalah "+ responseSchema.getOutputSchema().toString());
-		return responseSchema;
+		return ResponseEntity.status(HttpStatus.OK).body(responseSchema);
 		
 	}
-}
+
 			
 	
 	//DELETE DATA 
-	public GroupUserKbb deleteGroupUserKbb(String id) {
-		System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Persiapan untuk mencari data di db sebelum menghapusnya");
-		GroupUserKbb data = findGroupUserKbbById(id);
-		System.out.println("["+valueLog + "]" +" - "+dateLog() +" - Data berhasil ditemukan : " + data.toString());
+	public ResponseEntity<?> deleteGroupUserKbb(String id) {
+		//VALUELOG UNTUK 1 SERVICE 
+		String valueLog = logNumber();
+		ErrorSchema errorSchema = new ErrorSchema(ErrorEnum.DELETE);
+		ResponseSchema<GroupUserKbb> responseSchema = new ResponseSchema<>(errorSchema);
+		GroupUserKbb data = new GroupUserKbb();
+	try {
+		
+		data = groupUserKbbRepository.findById(id).get();
+		System.out.println("["+valueLog + "]" +" - "+dateLog() +" - Data berhasil ditemukan  : " + data.toString());
 		System.out.println("["+valueLog + "]" +" - "+dateLog() +" - Persiapan menghapus data dari data yang barusan difind by id");
 		groupUserKbbRepository.delete(data);
 		System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Data Berhasil dihapus");
-		return data;
+		
+	} catch (Exception e) {
+		System.out.println("["+valueLog + "]" +" - "+dateLog() +" - Tidak Bisa Menghapus Data Dengan ID Yang Di Input Tidak Ada Dalam DB" );
+		ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_DELETE);
+		ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);	
+		responseSchema2.setOutputSchema(new GagalOutputSchema("Data Yang Akan DIhapus Tidak Ada Dalam DB"));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
 	}
-
+	
+	responseSchema.setOutputSchema(data);
+	return ResponseEntity.status(HttpStatus.OK).body(responseSchema);
+	}
 }

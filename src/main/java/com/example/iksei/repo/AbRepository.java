@@ -1,8 +1,6 @@
-package com.example.iksei.model.repo;
+package com.example.iksei.repo;
 
 import java.util.Map;
-
-import javax.websocket.server.PathParam;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,10 +18,4 @@ public interface AbRepository extends JpaRepository<Ab, String> {
 	@Query(value = "SELECT is_notified FROM DENDI_AB Where is_notified IN('Y', 'N')", nativeQuery = true)
 	public Map<String, String> cekIsNotified();
 	
-
-	
-//	//Insert AB untuk VALUE IS_NOTIFIED HARUS Y ATAU N 
-//	@Query(value = "", nativeQuery = true)
-//	public Map<String, String> insertAb();
-
 }
