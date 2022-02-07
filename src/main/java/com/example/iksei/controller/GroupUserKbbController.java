@@ -189,11 +189,7 @@ public class GroupUserKbbController {
 					responseFail.setOutputSchema(new GagalOutputSchema("Data Is Not Updated !"));
 					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseFail);
 				}
-				
-				/*   "id"                 : "4LKBGRPY3KOGDFLQYTK1HKNYIG6JRNUY",
-   					 "ab_id"              : "ik030",
-    				 "group_user_code"   : "abc01",
-    				 "is_new"            : " y" */
+
 				map.put("id", result.getId());
 				
 				if(result.getAbIdNew()!= null) {
