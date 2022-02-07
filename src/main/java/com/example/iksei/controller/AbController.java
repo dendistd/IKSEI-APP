@@ -191,7 +191,7 @@ public class AbController {
 			
 			if(result.getAbNameNew()!= null) {
 				map.put("ab_name_old", result.getAbNameOld());
-				map.put("ab_name", result.getAbNameNew().toUpperCase());
+				map.put("ab_name_new", result.getAbNameNew().toUpperCase());
 			}
 			
 			if(result.getIsNotifiedNew()!= null) {
