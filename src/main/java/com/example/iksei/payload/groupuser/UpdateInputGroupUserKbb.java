@@ -5,6 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UpdateInputGroupUserKbb {
+	
 	@JsonProperty("id")
 	private String id;
 	
@@ -22,6 +23,14 @@ public class UpdateInputGroupUserKbb {
 	
 	public UpdateInputGroupUserKbb() {
 		super();
+	}
+	
+	public UpdateInputGroupUserKbb(String id, String abId, String groupUserCode, String isNew) {
+		super();
+		this.id = id;
+		this.abId = abId;
+		this.groupUserCode = groupUserCode;
+		this.isNew = isNew;
 	}
 
 	public UpdateInputGroupUserKbb(String id, String abId, String groupUserCode, Date regDate, String isNew) {

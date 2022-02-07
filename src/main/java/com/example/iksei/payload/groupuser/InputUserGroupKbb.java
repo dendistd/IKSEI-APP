@@ -3,10 +3,7 @@ package com.example.iksei.payload.groupuser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class InputUserGroupKbb {
-	
-	@JsonProperty("id")
-	private String id;
-	
+		
 	@JsonProperty("ab_id")
 	private String abId;
 	
@@ -20,21 +17,14 @@ public class InputUserGroupKbb {
 		super();
 	}
 
-	public InputUserGroupKbb(String id, String abId, String groupUserCode, String isNew) {
+	public InputUserGroupKbb( String abId, String groupUserCode, String isNew) {
 		super();
-		this.id = id;
+
 		this.abId = abId;
 		this.groupUserCode = groupUserCode;
 		this.isNew = isNew;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getAbId() {
 		return abId;
@@ -62,7 +52,7 @@ public class InputUserGroupKbb {
 
 	@Override
 	public String toString() {
-		return "InputUserGroupKbb [id=" + id + ", abId=" + abId + ", groupUserCode=" + groupUserCode + ", isNew="
+		return "InputUserGroupKbb [abId=" + abId + ", groupUserCode=" + groupUserCode + ", isNew="
 				+ isNew + "]";
 	}
 	

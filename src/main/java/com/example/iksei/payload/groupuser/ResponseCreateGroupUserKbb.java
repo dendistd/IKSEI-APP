@@ -1,50 +1,42 @@
-package com.example.iksei.model;
+package com.example.iksei.payload.groupuser;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "dendi_user_group_kbb")
-public class GroupUserKbb {
+public class ResponseCreateGroupUserKbb {
 	
-	@Id
-	@Column(name = "id")
+	@JsonProperty("id")
 	private String id;
 	
-	@Column(name = "ab_id")
+	@JsonProperty("ab_id")
 	private String abId;
 	
-	@Column(name = "group_user_code")
+	@JsonProperty("group_user_code")
 	private String groupUserCode;
 	
-	@Column(name = "reg_date")
+	@JsonProperty("reg_date")
 	private Date regDate;
 	
-	@Column(name = "is_new")
+	@JsonProperty("is_new")
 	private String isNew;
 
-	public GroupUserKbb() {
+	public ResponseCreateGroupUserKbb() {
 		super();
 	}
+	
+	public ResponseCreateGroupUserKbb(String abId, String groupUserCode, String isNew) {
+		super();
+		this.abId = abId;
+		this.groupUserCode = groupUserCode;
+		this.isNew = isNew;
+	}
 
-	public GroupUserKbb(String id, String abId, String groupUserCode, Date regDate, String isNew) {
+	public ResponseCreateGroupUserKbb(String id, String abId, String groupUserCode, Date regDate, String isNew) {
 		super();
 		this.id = id;
 		this.abId = abId;
 		this.groupUserCode = groupUserCode;
 		this.regDate = regDate;
-		this.isNew = isNew;
-	}
-	
-	public GroupUserKbb(String abId, String groupUserCode, String isNew) {
-		super();
-		
-		this.abId = abId;
-		this.groupUserCode = groupUserCode;
 		this.isNew = isNew;
 	}
 
@@ -90,8 +82,8 @@ public class GroupUserKbb {
 
 	@Override
 	public String toString() {
-		return "GroupUserKbb [id=" + id + ", abId=" + abId + ", groupUserCode=" + groupUserCode + ", regDate=" + regDate
-				+ ", isNew=" + isNew + "]";
+		return "ResponseCreateGroupUserKbb [id=" + id + ", abId=" + abId + ", groupUserCode=" + groupUserCode
+				+ ", regDate=" + regDate + ", isNew=" + isNew + "]";
 	}
 	
 	

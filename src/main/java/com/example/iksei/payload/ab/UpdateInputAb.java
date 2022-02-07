@@ -22,14 +22,8 @@ public class UpdateInputAb {
 	@JsonProperty("corporate_id")
 	private String corporateId;
 	
-	@JsonProperty("corp_id_reg_date")
-	private Date corpIdRegDate;
-	
 	@JsonProperty("comp_code")
 	private String compCode;
-	
-	@JsonProperty("comp_code_reg_date")
-	private Date compCodeRegDate;
 	
 	@JsonProperty("ab_initial")
 	private String abInitial;
@@ -38,17 +32,16 @@ public class UpdateInputAb {
 		super();
 	}
 
+	
 	public UpdateInputAb(String abId, String abName, String isNotified, String notifTransaksi, String corporateId,
-			Date corpIdRegDate, String compCode, Date compCodeRegDate, String abInitial) {
+			String compCode, String abInitial) {
 		super();
 		this.abId = abId;
 		this.abName = abName;
 		this.isNotified = isNotified;
 		this.notifTransaksi = notifTransaksi;
 		this.corporateId = corporateId;
-		this.corpIdRegDate = corpIdRegDate;
 		this.compCode = compCode;
-		this.compCodeRegDate = compCodeRegDate;
 		this.abInitial = abInitial;
 	}
 
@@ -92,13 +85,6 @@ public class UpdateInputAb {
 		this.corporateId = corporateId;
 	}
 
-	public Date getCorpIdRegDate() {
-		return corpIdRegDate;
-	}
-
-	public void setCorpIdRegDate(Date corpIdRegDate) {
-		this.corpIdRegDate = corpIdRegDate;
-	}
 
 	public String getCompCode() {
 		return compCode;
@@ -108,13 +94,6 @@ public class UpdateInputAb {
 		this.compCode = compCode;
 	}
 
-	public Date getCompCodeRegDate() {
-		return compCodeRegDate;
-	}
-
-	public void setCompCodeRegDate(Date compCodeRegDate) {
-		this.compCodeRegDate = compCodeRegDate;
-	}
 
 	public String getAbInitial() {
 		return abInitial;
@@ -127,8 +106,8 @@ public class UpdateInputAb {
 	@Override
 	public String toString() {
 		return "UpdateInputAb [abId=" + abId + ", abName=" + abName + ", isNotified=" + isNotified + ", notifTransaksi="
-				+ notifTransaksi + ", corporateId=" + corporateId + ", corpRegDate=" + corpIdRegDate + ", compCode="
-				+ compCode + ", compCodeRegDate=" + compCodeRegDate + ", abInitial=" + abInitial + "]";
+				+ notifTransaksi + ", corporateId=" + corporateId + ", compCode="
+				+ compCode + ", abInitial=" + abInitial + "]";
 	}
 	
 	
