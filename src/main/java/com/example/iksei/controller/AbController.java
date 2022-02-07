@@ -71,7 +71,7 @@ public class AbController {
 			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Controller -> Gagal Menampilkan Semua Data");
 			ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_FIND_ONE);
 			ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);
-			responseSchema2.setOutputSchema(new GagalOutputSchema("Show All Data Failed"));
+			responseSchema2.setOutputSchema(new GagalOutputSchema(e.getLocalizedMessage()));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
 		}
 
@@ -92,7 +92,7 @@ public class AbController {
 			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Controller -> Data Dengan ID Yang Diinput Tidak Ada Dalam DB");
 			ErrorSchema errorSchema2 = new ErrorSchema(ErrorEnum.FAIL_FIND_ONE);
 			ResponseSchema<GagalOutputSchema> responseSchema2 = new ResponseSchema<>(errorSchema2);
-			responseSchema2.setOutputSchema(new GagalOutputSchema("Data Dengan Id Yang Di Input Tidak Ada Dalam DB"));
+			responseSchema2.setOutputSchema(new GagalOutputSchema(e.getLocalizedMessage()));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseSchema2);
 		}
 		responseSchema.setOutputSchema(result);
@@ -244,7 +244,7 @@ public class AbController {
 			System.out.println("["+valueLog + "]" +" - "+dateLog() + " - Tidak Bisa Menghapus Data Yang Tidak Ada Dalam DB");
 			ErrorSchema errorFail = new ErrorSchema(ErrorEnum.FAIL_DELETE);
 			ResponseSchema<GagalOutputSchema> responseFail = new ResponseSchema<>(errorFail);
-			responseFail.setOutputSchema(new GagalOutputSchema("Data Yang Akan Dihapus Tidak Ada Dalam DB"));
+			responseFail.setOutputSchema(new GagalOutputSchema(e.getLocalizedMessage()));
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseFail);
 		}
 		responseSchema.setOutputSchema(result);
