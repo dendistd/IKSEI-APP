@@ -139,14 +139,6 @@ public class AbServiceImple implements AbService {
 	
 	//UPDATE AB 
 	public ResponseUpdateAb updateAb (UpdateInputAb input){
-		/* Alur proses update : 
-		 * 1. kita input ab_id di input param(body) untuk update datav(DONE)
-		 * 2. ab_id yang di input (SI map nya) harus sama dengan ab_id yang ada di db (DONE)
-		 * 3. Jika di input paramnya(map) tidak di inputkan AB_ID (null), maka tidak boleh/tidak bisa untuk update data (done) 
-		 * 4. Jika map (input paramnya) kosong/null, artinya tidak ada inputan field apa aja yang mau di update (done)
-		 * MAKA tidak akan bisa/boleh update data
-		 * 5. kita boleh update data dari beberapa/semua field yang ingin diubah => (FLEKSIBEL) (DONE)
-		 * 6. Jika length value di input paramnya MELEBIHI AMX VALUE SETIAP FILED, MAKA-> UPDATE GAGAL*/
 		String valueLog = logNumber();
 		ResponseUpdateAb responseGagal = new ResponseUpdateAb();
 		
